@@ -26,6 +26,7 @@
     input,textarea,select { width:100%; border:1px solid var(--line); border-radius:10px; background:white; padding:12px; color:var(--ink); font:inherit; }
     textarea { min-height:100px; resize:vertical; }
     .fields { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .search-results { margin-top:10px; } .search-result { border-top:1px solid var(--line); padding:12px 0; } .search-result:first-child { border-top:0; } .toc-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; } .toc-chip { padding:7px 10px; font-size:12px; border-radius:999px; }
     .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
     .book,.quote { border-top:1px solid var(--line); padding:15px 0; }
     .book:first-child,.quote:first-child { border-top:0; }
@@ -74,11 +75,18 @@
       <div class="panel">
         <h2>새로운 책 등록</h2>
         <form id="book-form">
+          <label for="book-search">책 검색</label>
+          <div class="fields"><input id="book-search" placeholder="책 제목 또는 ISBN 검색"><button type="button" id="book-search-btn">책 검색</button></div>
+          <p class="notice">검색 결과를 선택하면 제목·저자·출판사·ISBN을 자동으로 채워요.</p>
+          <div id="book-search-status" class="status" role="status"></div>
+          <div id="book-search-results" class="search-results"></div>
           <label for="book-title">책 제목 *</label><input id="book-title" required placeholder="예: 어서 오세요, 휴남동 서점입니다">
           <div class="fields">
             <div><label for="book-author">저자</label><input id="book-author" placeholder="저자 이름"></div>
-            <div><label for="book-isbn">ISBN (선택)</label><input id="book-isbn" placeholder="ISBN"></div>
+            <div><label for="book-publisher">출판사</label><input id="book-publisher" placeholder="출판사"></div>
           </div>
+          <label for="book-isbn">ISBN</label><input id="book-isbn" placeholder="ISBN-13 또는 ISBN-10">
+          <div id="book-toc-area" class="hidden"><label>불러온 목차 / 소제목</label><p class="notice">제공처에 목차 정보가 있는 책만 표시돼요. 아래 항목을 눌러 문장 기록의 목차 칸에 넣을 수 있어요.</p><div id="book-toc-list" class="toc-list"></div></div>
           <label for="book-status">독서 상태</label>
           <select id="book-status"><option>읽고 싶은 책</option><option>읽는 중</option><option>완독</option></select>
           <div class="actions"><button class="primary" type="submit">책장에 추가</button></div>
@@ -189,13 +197,13 @@
 
   async function loadCloudData() {
     const [bookResult, quoteResult] = await Promise.all([
-      client.from("books").select("id,title,author,isbn,reading_status,created_at").order("created_at", {ascending:true}),
+      client.from("books").select("id,title,author,isbn,publisher,reading_status,created_at").order("created_at", {ascending:true}),
       client.from("quotes").select("id,book_id,quote_text,reflection,page_number,toc_title,created_at").order("created_at", {ascending:true})
     ]);
     if (bookResult.error) throw bookResult.error;
     if (quoteResult.error) throw quoteResult.error;
     books = (bookResult.data || []).map(b => ({
-      id: String(b.id), title: b.title, author: b.author || "", isbn: b.isbn || "", status: b.reading_status || "읽고 싶은 책"
+      id: String(b.id), title: b.title, author: b.author || "", isbn: b.isbn || "", publisher: b.publisher || "", status: b.reading_status || "읽고 싶은 책"
     }));
     quotes = (quoteResult.data || []).map(q => ({
       id: String(q.id), bookId: String(q.book_id), text: q.quote_text, reflection: q.reflection || "",
@@ -324,6 +332,77 @@
     $("quotes").classList.toggle("hidden", button.dataset.tab !== "quotes");
   }));
 
+  let selectedBookToc = [];
+  function isbnFromIdentifiers(ids) {
+    const found = (ids || []).find(x => x.type === "ISBN_13") || (ids || []).find(x => x.type === "ISBN_10");
+    return found?.identifier || "";
+  }
+  function showToc(items) {
+    selectedBookToc = items || [];
+    const area = $("book-toc-area"), list = $("book-toc-list");
+    if (!selectedBookToc.length) { area.classList.add("hidden"); list.innerHTML = ""; return; }
+    area.classList.remove("hidden");
+    list.innerHTML = selectedBookToc.map((item, i) => `<button type="button" class="toc-chip" data-toc-index="${i}">${safe(item)}</button>`).join("");
+  }
+  $("book-toc-list").addEventListener("click", event => {
+    const btn = event.target.closest("[data-toc-index]");
+    if (!btn) return;
+    $("quote-section").value = selectedBookToc[Number(btn.dataset.tocIndex)] || "";
+    document.querySelector('[data-tab="quotes"]').click();
+    setStatus("목차 항목을 문장 기록에 넣었어요. 책을 선택하고 문장을 기록해 주세요.", "ok");
+  });
+  async function loadBookToc(isbn, googleVolume) {
+    let toc = [];
+    // Open Library의 판본 목차가 공개된 경우에만 가져옵니다.
+    if (isbn) {
+      try {
+        const r = await fetch(`https://openlibrary.org/isbn/${encodeURIComponent(isbn)}.json`);
+        if (r.ok) {
+          const edition = await r.json();
+          toc = (edition.table_of_contents || []).map(x => typeof x === "string" ? x : (x.title || "")).filter(Boolean);
+        }
+      } catch (_) {}
+    }
+    // 일부 Google Books 항목은 목차를 제공하지 않으므로 설명에 목차가 있다고 추측하지 않습니다.
+    showToc([...new Set(toc)]);
+    if (!toc.length) $("book-search-status").textContent = "책 정보는 불러왔어요. 다만 공개 도서 정보에 목차/소제목이 없어 자동으로 표시하지 못했어요. 책에 따라 제공 여부가 달라요.";
+  }
+  async function searchBooks() {
+    const query = $("book-search").value.trim();
+    if (!query) { $("book-search-status").textContent = "책 제목이나 ISBN을 입력해 주세요."; return; }
+    $("book-search-btn").disabled = true;
+    $("book-search-status").textContent = "책 정보를 검색하고 있어요…";
+    $("book-search-results").innerHTML = "";
+    showToc([]);
+    try {
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(/^\d{10,13}$/.test(query) ? `isbn:${query}` : query)}&maxResults=10&printType=books`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("도서 검색 서비스에 연결하지 못했어요.");
+      const data = await response.json();
+      const items = data.items || [];
+      if (!items.length) { $("book-search-status").textContent = "검색 결과가 없어요. 제목이나 ISBN을 확인해 주세요."; return; }
+      $("book-search-status").textContent = `검색 결과 ${items.length}개`; 
+      $("book-search-results").innerHTML = items.map((item, i) => {
+        const v = item.volumeInfo || {};
+        return `<div class="search-result"><strong>${safe(v.title || "제목 미상")}</strong><div class="meta">${safe((v.authors || []).join(", ") || "저자 정보 없음")} · ${safe(v.publisher || "출판사 정보 없음")}</div><div class="meta">ISBN: ${safe(isbnFromIdentifiers(v.industryIdentifiers) || "정보 없음")} · ${safe(v.publishedDate || "발행일 미상")}</div><button type="button" data-book-result="${i}">이 책 선택</button></div>`;
+      }).join("");
+      $("book-search-results").querySelectorAll("[data-book-result]").forEach(btn => btn.addEventListener("click", async () => {
+        const item = items[Number(btn.dataset.bookResult)]; const v = item.volumeInfo || {};
+        $("book-title").value = v.title || "";
+        $("book-author").value = (v.authors || []).join(", ");
+        $("book-publisher").value = v.publisher || "";
+        const isbn = isbnFromIdentifiers(v.industryIdentifiers);
+        $("book-isbn").value = isbn;
+        $("book-search-status").textContent = "책 정보를 입력했어요. 목차 정보를 확인하고 있어요…";
+        await loadBookToc(isbn, item);
+      }));
+    } catch (err) {
+      $("book-search-status").textContent = "검색에 실패했어요. 인터넷 연결을 확인하거나 제목을 직접 입력해 주세요.";
+    } finally { $("book-search-btn").disabled = false; }
+  }
+  $("book-search-btn").addEventListener("click", searchBooks);
+  $("book-search").addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); searchBooks(); } });
+
   $("book-form").addEventListener("submit", async event => {
     event.preventDefault();
     if (!client || !currentUser || busy) return setStatus("먼저 로그인해 주세요.", "error");
@@ -333,6 +412,7 @@
       title: $("book-title").value.trim(),
       author: $("book-author").value.trim(),
       isbn: $("book-isbn").value.trim(),
+      publisher: $("book-publisher").value.trim(),
       reading_status: $("book-status").value
     };
     const {error} = await client.from("books").insert(row);
