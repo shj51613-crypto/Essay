@@ -377,7 +377,16 @@
     try {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(/^\d{10,13}$/.test(query) ? `isbn:${query}` : query)}&maxResults=10&printType=books`;
       const response = await fetch(url);
-      if (!response.ok) throw new Error("도서 검색 서비스에 연결하지 못했어요.");
+      if (!response.ok) {
+        let apiDetail = "";
+        try {
+          const body = await response.json();
+          apiDetail = body?.error?.message || "";
+        } catch (_) {
+          try { apiDetail = (await response.text()).slice(0, 240); } catch (_) {}
+        }
+        throw new Error(`Google Books API 응답 오류 (HTTP ${response.status}${response.statusText ? " " + response.statusText : ""})${apiDetail ? ": " + apiDetail : ""}`);
+      }
       const data = await response.json();
       const items = data.items || [];
       if (!items.length) { $("book-search-status").textContent = "검색 결과가 없어요. 제목이나 ISBN을 확인해 주세요."; return; }
