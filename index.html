@@ -10,6 +10,8 @@
     * { box-sizing:border-box; }
     body { margin:0; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; }
     header { padding:25px 20px 18px; border-bottom:1px solid var(--line); background:var(--card); }
+    .header-inner { position:relative; }
+    .header-logout { position:absolute; top:0; right:0; padding:5px 9px; border-radius:8px; font-size:12px; color:var(--muted); background:transparent; }
     .wrap { width:min(760px,100%); margin:auto; }
     .eyebrow { color:var(--muted); font-size:12px; letter-spacing:2px; }
     h1 { font-size:27px; margin:8px 0; }
@@ -40,7 +42,8 @@
   </style>
 </head>
 <body>
-<header><div class="wrap">
+<header><div class="wrap header-inner">
+  <button id="header-logout-btn" type="button" class="header-logout hidden">로그아웃</button>
   <div class="eyebrow">MY READING JOURNAL</div>
   <h1>문장의 서랍</h1>
   <div class="subtitle">오래 간직하고 싶은 문장과 마음을 모으는 곳.</div>
@@ -58,7 +61,6 @@
       <button class="primary" id="signup-btn" type="button">회원가입</button>
       <button id="login-btn" type="button">로그인</button>
       <button id="resend-btn" type="button">인증 메일 재전송</button>
-      <button id="logout-btn" type="button" class="hidden">로그아웃</button>
     </div>
     <div id="auth-status" class="status" role="status">Supabase 연결 정보를 입력한 뒤 회원가입 또는 로그인할 수 있어요.</div>
   </section>
@@ -222,7 +224,8 @@
   function showSignedIn(user) {
     currentUser = user;
     $("app-area").classList.remove("hidden");
-    $("logout-btn").classList.remove("hidden");
+    $("auth-panel").classList.add("hidden");
+    $("header-logout-btn").classList.remove("hidden");
     $("signup-btn").classList.add("hidden");
     $("login-btn").classList.add("hidden");
     $("auth-email").disabled = true;
@@ -232,7 +235,8 @@
     currentUser = null;
     books = []; quotes = [];
     $("app-area").classList.add("hidden");
-    $("logout-btn").classList.add("hidden");
+    $("auth-panel").classList.remove("hidden");
+    $("header-logout-btn").classList.add("hidden");
     $("signup-btn").classList.remove("hidden");
     $("login-btn").classList.remove("hidden");
     $("auth-email").disabled = false;
@@ -307,7 +311,7 @@
     if (error) return setStatus(error.message, "error");
     setStatus("로그인 중이에요…");
   });
-  $("logout-btn").addEventListener("click", async () => {
+  $("header-logout-btn").addEventListener("click", async () => {
     if (client) {
       const {error} = await client.auth.signOut();
       if (error) setStatus(error.message, "error");
