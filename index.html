@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,266 +6,345 @@
   <meta name="theme-color" content="#f7f3eb">
   <title>문장의 서랍</title>
   <style>
-    :root {
-      --paper: #f7f3eb;
-      --card: #fffdf8;
-      --ink: #443a30;
-      --muted: #8b7d6c;
-      --accent: #87694e;
-      --line: #e6ddd0;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-        "Malgun Gothic", sans-serif;
-    }
-    header {
-      padding: 25px 20px 18px;
-      border-bottom: 1px solid var(--line);
-      background: var(--card);
-    }
-    .wrap { width: min(760px, 100%); margin: auto; }
-    .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: 2px; }
-    h1 { font-size: 27px; margin: 8px 0; }
-    .subtitle { color: var(--muted); font-size: 14px; }
-    main { padding: 22px 16px 50px; }
-    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-    button {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 11px 15px;
-      background: var(--card);
-      color: var(--ink);
-      cursor: pointer;
-      font: inherit;
-    }
-    button.active, .primary {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-    .panel {
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--card);
-      margin-bottom: 16px;
-    }
-    h2 { font-size: 19px; margin: 0 0 14px; }
-    h3 { font-size: 16px; margin: 0 0 7px; }
-    label { display: block; font-size: 13px; margin: 12px 0 6px; }
-    input, textarea, select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: white;
-      padding: 12px;
-      color: var(--ink);
-      font: inherit;
-    }
-    textarea { min-height: 100px; resize: vertical; }
-    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-    .book, .quote {
-      border-top: 1px solid var(--line);
-      padding: 15px 0;
-    }
-    .book:first-child, .quote:first-child { border-top: 0; }
-    .meta { color: var(--muted); font-size: 13px; margin: 5px 0; }
-    .quote-text { line-height: 1.8; white-space: pre-wrap; }
-    .reflection {
-      background: var(--paper);
-      padding: 12px;
-      border-radius: 10px;
-      margin-top: 10px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
-    .empty { color: var(--muted); text-align: center; padding: 22px 0; }
-    .hidden { display: none; }
-    .notice { color: var(--muted); font-size: 12px; line-height: 1.6; }
-    @media (max-width: 480px) {
-      .fields { grid-template-columns: 1fr; }
-      h1 { font-size: 24px; }
-    }
+    :root { --paper:#f7f3eb; --card:#fffdf8; --ink:#443a30; --muted:#8b7d6c; --accent:#87694e; --line:#e6ddd0; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; }
+    header { padding:25px 20px 18px; border-bottom:1px solid var(--line); background:var(--card); }
+    .wrap { width:min(760px,100%); margin:auto; }
+    .eyebrow { color:var(--muted); font-size:12px; letter-spacing:2px; }
+    h1 { font-size:27px; margin:8px 0; }
+    .subtitle { color:var(--muted); font-size:14px; }
+    main { padding:22px 16px 50px; }
+    .tabs { display:flex; gap:8px; margin-bottom:20px; }
+    button { border:1px solid var(--line); border-radius:12px; padding:11px 15px; background:var(--card); color:var(--ink); cursor:pointer; font:inherit; }
+    button.active,.primary { background:var(--accent); color:white; border-color:var(--accent); }
+    .panel { padding:18px; border:1px solid var(--line); border-radius:18px; background:var(--card); margin-bottom:16px; }
+    h2 { font-size:19px; margin:0 0 14px; } h3 { font-size:16px; margin:0 0 7px; }
+    label { display:block; font-size:13px; margin:12px 0 6px; }
+    input,textarea,select { width:100%; border:1px solid var(--line); border-radius:10px; background:white; padding:12px; color:var(--ink); font:inherit; }
+    textarea { min-height:100px; resize:vertical; }
+    .fields { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .book,.quote { border-top:1px solid var(--line); padding:15px 0; }
+    .book:first-child,.quote:first-child { border-top:0; }
+    .meta { color:var(--muted); font-size:13px; margin:5px 0; }
+    .quote-text { line-height:1.8; white-space:pre-wrap; }
+    .reflection { background:var(--paper); padding:12px; border-radius:10px; margin-top:10px; line-height:1.7; white-space:pre-wrap; }
+    .empty { color:var(--muted); text-align:center; padding:22px 0; }
+    .hidden { display:none !important; }
+    .notice { color:var(--muted); font-size:12px; line-height:1.6; }
+    .status { font-size:13px; line-height:1.6; margin-top:10px; overflow-wrap:anywhere; }
+    .status.error { color:#a33; } .status.ok { color:#386641; }
+    .auth-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:480px) { .fields,.auth-row { grid-template-columns:1fr; } h1 { font-size:24px; } }
   </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="eyebrow">MY READING JOURNAL</div>
-    <h1>문장의 서랍</h1>
-    <div class="subtitle">오래 간직하고 싶은 문장과 마음을 모으는 곳.</div>
-  </div>
-</header>
+<header><div class="wrap">
+  <div class="eyebrow">MY READING JOURNAL</div>
+  <h1>문장의 서랍</h1>
+  <div class="subtitle">오래 간직하고 싶은 문장과 마음을 모으는 곳.</div>
+</div></header>
 
 <main class="wrap">
-  <nav class="tabs">
-    <button class="active" data-tab="books">나의 책장</button>
-    <button data-tab="quotes">모아 둔 문장</button>
-  </nav>
-
-  <section id="books">
-    <div class="panel">
-      <h2>새로운 책 등록</h2>
-      <form id="book-form">
-        <label for="book-title">책 제목 *</label>
-        <input id="book-title" required placeholder="예: 어서 오세요, 휴남동 서점입니다">
-        <div class="fields">
-          <div>
-            <label for="book-author">저자</label>
-            <input id="book-author" placeholder="저자 이름">
-          </div>
-          <div>
-            <label for="book-isbn">ISBN (선택)</label>
-            <input id="book-isbn" placeholder="ISBN">
-          </div>
-        </div>
-        <label for="book-status">독서 상태</label>
-        <select id="book-status">
-          <option>읽고 싶은 책</option>
-          <option>읽는 중</option>
-          <option>완독</option>
-        </select>
-        <div class="actions">
-          <button class="primary" type="submit">책장에 추가</button>
-        </div>
-      </form>
+  <section class="panel" id="auth-panel">
+    <h2>계정 및 동기화</h2>
+    <p class="notice">같은 계정으로 로그인하면 기기 간에 책과 문장이 동기화됩니다. 처음에는 이메일 인증이 필요할 수 있어요.</p>
+    <div class="auth-row">
+      <div><label for="auth-email">이메일</label><input id="auth-email" type="email" autocomplete="email" placeholder="이메일 주소"></div>
+      <div><label for="auth-password">비밀번호</label><input id="auth-password" type="password" autocomplete="current-password" placeholder="비밀번호 (6자 이상)"></div>
     </div>
-    <div class="panel">
-      <h2>내 책장</h2>
-      <div id="book-list"></div>
+    <div class="actions">
+      <button class="primary" id="signup-btn" type="button">회원가입</button>
+      <button id="login-btn" type="button">로그인</button>
+      <button id="logout-btn" type="button" class="hidden">로그아웃</button>
     </div>
+    <div id="auth-status" class="status" role="status">Supabase 연결 정보를 입력한 뒤 회원가입 또는 로그인할 수 있어요.</div>
   </section>
 
-  <section id="quotes" class="hidden">
-    <div class="panel">
-      <h2>새로운 문장 기록</h2>
-      <form id="quote-form">
-        <label for="quote-book">어떤 책에서 발견했나요? *</label>
-        <select id="quote-book" required></select>
-        <label for="quote-text">책 속 문장 *</label>
-        <textarea id="quote-text" required placeholder="마음에 남은 문장을 적어 보세요."></textarea>
-        <label for="quote-reflection">나의 감상</label>
-        <textarea id="quote-reflection" placeholder="이 문장을 읽고 어떤 생각이 들었나요?"></textarea>
-        <div class="fields">
-          <div>
-            <label for="quote-section">목차 / 소제목</label>
-            <input id="quote-section" placeholder="예: 1장 - 봄날">
+  <div id="app-area" class="hidden">
+    <nav class="tabs">
+      <button class="active" data-tab="books">나의 책장</button>
+      <button data-tab="quotes">모아 둔 문장</button>
+    </nav>
+    <section id="books">
+      <div class="panel">
+        <h2>새로운 책 등록</h2>
+        <form id="book-form">
+          <label for="book-title">책 제목 *</label><input id="book-title" required placeholder="예: 어서 오세요, 휴남동 서점입니다">
+          <div class="fields">
+            <div><label for="book-author">저자</label><input id="book-author" placeholder="저자 이름"></div>
+            <div><label for="book-isbn">ISBN (선택)</label><input id="book-isbn" placeholder="ISBN"></div>
           </div>
-          <div>
-            <label for="quote-page">쪽수</label>
-            <input id="quote-page" type="number" min="1" placeholder="예: 35">
+          <label for="book-status">독서 상태</label>
+          <select id="book-status"><option>읽고 싶은 책</option><option>읽는 중</option><option>완독</option></select>
+          <div class="actions"><button class="primary" type="submit">책장에 추가</button></div>
+        </form>
+      </div>
+      <div class="panel"><h2>내 책장</h2><div id="book-list"></div></div>
+    </section>
+    <section id="quotes" class="hidden">
+      <div class="panel">
+        <h2>새로운 문장 기록</h2>
+        <form id="quote-form">
+          <label for="quote-book">어떤 책에서 발견했나요? *</label><select id="quote-book" required></select>
+          <label for="quote-text">책 속 문장 *</label><textarea id="quote-text" required placeholder="마음에 남은 문장을 적어 보세요."></textarea>
+          <label for="quote-reflection">나의 감상</label><textarea id="quote-reflection" placeholder="이 문장을 읽고 어떤 생각이 들었나요?"></textarea>
+          <div class="fields">
+            <div><label for="quote-section">목차 / 소제목</label><input id="quote-section" placeholder="예: 1장 - 봄날"></div>
+            <div><label for="quote-page">쪽수</label><input id="quote-page" type="number" min="1" placeholder="예: 35"></div>
           </div>
-        </div>
-        <div class="actions">
-          <button class="primary" type="submit">문장 저장</button>
-        </div>
-      </form>
-    </div>
-    <div class="panel">
-      <h2>수집한 문장</h2>
-      <div id="quote-list"></div>
-    </div>
-  </section>
-
-  <p class="notice">현재 버전은 이 브라우저에 데이터를 저장하는 시제품입니다. 브라우저 데이터 삭제나 다른 기기에서는 데이터가 유지되지 않을 수 있어요. 계정 동기화 기능은 다음 단계에서 추가할 예정입니다.</p>
+          <div class="actions"><button class="primary" type="submit">문장 저장</button></div>
+        </form>
+      </div>
+      <div class="panel"><h2>수집한 문장</h2><div id="quote-list"></div></div>
+    </section>
+  </div>
+  <p class="notice">온라인 동기화는 로그인한 뒤 사용할 수 있습니다. 브라우저에 남아 있던 기존 데이터는 처음 로그인할 때 가져올 수 있도록 별도로 보존합니다.</p>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // 아래 두 값만 본인의 Supabase 프로젝트 값으로 바꿔 주세요.
+  const SUPABASE_URL = "https://xiiejtdjkrduerbzuqul.supabase.co/rest/v1/";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_1DqtpHPundJsykGqEIxWRw_aB6U3D99";
+
   const $ = id => document.getElementById(id);
-  const load = (key) => {
-    try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-    catch { return []; }
-  };
-  let books = load("munjang-books");
-  let quotes = load("munjang-quotes");
-  const save = () => {
-    localStorage.setItem("munjang-books", JSON.stringify(books));
-    localStorage.setItem("munjang-quotes", JSON.stringify(quotes));
-  };
-  const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  })[c]);
-  const id = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const localLoad = key => { try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; } };
+  let books = [];
+  let quotes = [];
+  let client = null;
+  let currentUser = null;
+  let busy = false;
+
+  function setStatus(message, kind="") {
+    const el = $("auth-status");
+    el.textContent = message;
+    el.className = "status " + kind;
+  }
+  function configured() {
+    return SUPABASE_URL.startsWith("https://") &&
+      !SUPABASE_URL.includes("여기에_") &&
+      SUPABASE_PUBLISHABLE_KEY.length > 20 &&
+      !SUPABASE_PUBLISHABLE_KEY.includes("여기에_");
+  }
+  function localMigrationKey(userId) { return "munjang-cloud-migration-v1-" + userId; }
+
+  async function migrateLocalDataIfNeeded() {
+    const marker = localMigrationKey(currentUser.id);
+    if (localStorage.getItem(marker) === "done") return;
+    const oldBooks = localLoad("munjang-books");
+    const oldQuotes = localLoad("munjang-quotes");
+    if (!oldBooks.length && !oldQuotes.length) {
+      localStorage.setItem(marker, "done");
+      return;
+    }
+    const go = confirm(`이 브라우저에 기존 책 ${oldBooks.length}권과 문장 ${oldQuotes.length}개가 있어요.\n현재 로그인한 계정으로 가져올까요?\n기존 브라우저 데이터는 삭제하지 않습니다.`);
+    if (!go) {
+      setStatus("기존 데이터 가져오기를 건너뛰었어요. 나중에 다시 가져오려면 브라우저 데이터 백업을 유지해 주세요.");
+      return;
+    }
+    const idMap = new Map();
+    try {
+      for (const b of oldBooks) {
+        const row = {
+          user_id: currentUser.id,
+          title: String(b.title || "제목 없음"),
+          author: String(b.author || ""),
+          isbn: String(b.isbn || ""),
+          reading_status: String(b.status || "읽고 싶은 책")
+        };
+        const { data, error } = await client.from("books").insert(row).select("id").single();
+        if (error) throw error;
+        idMap.set(String(b.id), data.id);
+      }
+      for (const q of oldQuotes) {
+        const remoteBookId = idMap.get(String(q.bookId));
+        if (!remoteBookId) continue;
+        const page = q.page === "" || q.page == null ? null : Number(q.page);
+        const row = {
+          user_id: currentUser.id,
+          book_id: remoteBookId,
+          quote_text: String(q.text || ""),
+          reflection: String(q.reflection || ""),
+          page_number: Number.isFinite(page) ? page : null,
+          toc_title: String(q.section || "")
+        };
+        if (!row.quote_text) continue;
+        const { error } = await client.from("quotes").insert(row);
+        if (error) throw error;
+      }
+      localStorage.setItem(marker, "done");
+      setStatus("기존 브라우저 데이터를 온라인 계정으로 가져왔어요.", "ok");
+    } catch (err) {
+      console.error(err);
+      setStatus("기존 데이터 가져오기에 문제가 생겼어요: " + (err.message || err) + " 기존 브라우저 데이터는 유지되어 있어요.", "error");
+      return;
+    }
+  }
+
+  async function loadCloudData() {
+    const [bookResult, quoteResult] = await Promise.all([
+      client.from("books").select("id,title,author,isbn,reading_status,created_at").order("created_at", {ascending:true}),
+      client.from("quotes").select("id,book_id,quote_text,reflection,page_number,toc_title,created_at").order("created_at", {ascending:true})
+    ]);
+    if (bookResult.error) throw bookResult.error;
+    if (quoteResult.error) throw quoteResult.error;
+    books = (bookResult.data || []).map(b => ({
+      id: String(b.id), title: b.title, author: b.author || "", isbn: b.isbn || "", status: b.reading_status || "읽고 싶은 책"
+    }));
+    quotes = (quoteResult.data || []).map(q => ({
+      id: String(q.id), bookId: String(q.book_id), text: q.quote_text, reflection: q.reflection || "",
+      page: q.page_number == null ? "" : String(q.page_number), section: q.toc_title || ""
+    }));
+    render();
+  }
 
   function render() {
     $("book-list").innerHTML = books.length ? books.map(b => `
-      <div class="book">
-        <h3>${safe(b.title)}</h3>
+      <div class="book"><h3>${safe(b.title)}</h3>
         <div class="meta">${safe(b.author || "저자 미입력")} · ${safe(b.status)}</div>
         <div class="meta">${quotes.filter(q => q.bookId === b.id).length}개의 문장</div>
-        <div class="actions">
-          <button data-write="${b.id}">이 책의 문장 기록</button>
-          <button data-delete-book="${b.id}">책 삭제</button>
-        </div>
+        <div class="actions"><button data-write="${safe(b.id)}">이 책의 문장 기록</button><button data-delete-book="${safe(b.id)}">책 삭제</button></div>
       </div>`).join("") : '<div class="empty">아직 등록한 책이 없어요.</div>';
-
-    $("quote-book").innerHTML = books.length
-      ? books.map(b => `<option value="${b.id}">${safe(b.title)}</option>`).join("")
-      : '<option value="">먼저 책을 등록해 주세요.</option>';
-
+    $("quote-book").innerHTML = books.length ? books.map(b => `<option value="${safe(b.id)}">${safe(b.title)}</option>`).join("") : '<option value="">먼저 책을 등록해 주세요.</option>';
     $("quote-list").innerHTML = quotes.length ? [...quotes].reverse().map(q => {
       const book = books.find(b => b.id === q.bookId);
-      return `<div class="quote">
-        <div class="meta">${safe(book?.title || "삭제된 책")} · ${q.page ? safe(q.page) + "쪽" : "쪽수 미입력"}</div>
-        <div class="quote-text">“${safe(q.text)}”</div>
-        ${q.section ? `<div class="meta">목차: ${safe(q.section)}</div>` : ""}
+      return `<div class="quote"><div class="meta">${safe(book?.title || "삭제된 책")} · ${q.page ? safe(q.page) + "쪽" : "쪽수 미입력"}</div>
+        <div class="quote-text">“${safe(q.text)}”</div>${q.section ? `<div class="meta">목차: ${safe(q.section)}</div>` : ""}
         ${q.reflection ? `<div class="reflection">${safe(q.reflection)}</div>` : ""}
-        <div class="actions">
-          <button data-edit-quote="${q.id}">수정</button>
-          <button data-delete-quote="${q.id}">삭제</button>
-        </div>
-      </div>`;
+        <div class="actions"><button data-edit-quote="${safe(q.id)}">수정</button><button data-delete-quote="${safe(q.id)}">삭제</button></div></div>`;
     }).join("") : '<div class="empty">아직 모은 문장이 없어요.</div>';
   }
 
-  document.querySelectorAll("[data-tab]").forEach(button => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("active", b === button));
-      $("books").classList.toggle("hidden", button.dataset.tab !== "books");
-      $("quotes").classList.toggle("hidden", button.dataset.tab !== "quotes");
+  function showSignedIn(user) {
+    currentUser = user;
+    $("app-area").classList.remove("hidden");
+    $("logout-btn").classList.remove("hidden");
+    $("signup-btn").classList.add("hidden");
+    $("login-btn").classList.add("hidden");
+    $("auth-email").disabled = true;
+    $("auth-password").classList.add("hidden");
+  }
+  function showSignedOut() {
+    currentUser = null;
+    books = []; quotes = [];
+    $("app-area").classList.add("hidden");
+    $("logout-btn").classList.add("hidden");
+    $("signup-btn").classList.remove("hidden");
+    $("login-btn").classList.remove("hidden");
+    $("auth-email").disabled = false;
+    $("auth-password").classList.remove("hidden");
+  }
+
+  async function handleSignedIn(user) {
+    showSignedIn(user);
+    setStatus("로그인했어요. 온라인 데이터를 확인하고 있어요…");
+    try {
+      await migrateLocalDataIfNeeded();
+      await loadCloudData();
+      setStatus("로그인 및 온라인 동기화가 준비됐어요. 같은 계정으로 다른 기기에서도 로그인해 주세요.", "ok");
+    } catch (err) {
+      console.error(err);
+      setStatus("데이터를 불러오지 못했어요: " + (err.message || err), "error");
+    }
+  }
+
+  if (!configured()) {
+    setStatus("아직 Supabase 연결 정보가 입력되지 않았어요. 아래 안내에 따라 URL과 Publishable key를 코드에 입력해 주세요.");
+  } else if (window.supabase?.createClient) {
+    client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    client.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        // Avoid doing async Supabase work directly inside the auth callback.
+        setTimeout(() => handleSignedIn(session.user), 0);
+      } else if (event === "SIGNED_OUT") {
+        showSignedOut();
+        setStatus("로그아웃했어요.");
+      }
     });
+    client.auth.getSession().then(({data, error}) => {
+      if (error) setStatus(error.message, "error");
+      else if (data.session?.user) handleSignedIn(data.session.user);
+      else setStatus("이메일과 비밀번호로 회원가입하거나 로그인해 주세요.");
+    });
+  } else {
+    setStatus("Supabase 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.", "error");
+  }
+
+  $("signup-btn").addEventListener("click", async () => {
+    if (!client) return setStatus("먼저 코드에 Supabase URL과 Publishable key를 입력해 주세요.", "error");
+    const email = $("auth-email").value.trim(), password = $("auth-password").value;
+    if (!email || password.length < 6) return setStatus("이메일과 6자 이상의 비밀번호를 입력해 주세요.", "error");
+    const {data, error} = await client.auth.signUp({email, password});
+    if (error) return setStatus(error.message, "error");
+    if (!data.session) setStatus("회원가입 요청이 완료됐어요. 이메일을 확인해 인증한 뒤 로그인해 주세요.", "ok");
+  });
+  $("login-btn").addEventListener("click", async () => {
+    if (!client) return setStatus("먼저 코드에 Supabase URL과 Publishable key를 입력해 주세요.", "error");
+    const email = $("auth-email").value.trim(), password = $("auth-password").value;
+    if (!email || !password) return setStatus("이메일과 비밀번호를 입력해 주세요.", "error");
+    const {data, error} = await client.auth.signInWithPassword({email, password});
+    if (error) return setStatus(error.message, "error");
+    setStatus("로그인 중이에요…");
+  });
+  $("logout-btn").addEventListener("click", async () => {
+    if (client) {
+      const {error} = await client.auth.signOut();
+      if (error) setStatus(error.message, "error");
+    }
   });
 
-  $("book-form").addEventListener("submit", event => {
+  document.querySelectorAll("[data-tab]").forEach(button => button.addEventListener("click", () => {
+    document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("active", b === button));
+    $("books").classList.toggle("hidden", button.dataset.tab !== "books");
+    $("quotes").classList.toggle("hidden", button.dataset.tab !== "quotes");
+  }));
+
+  $("book-form").addEventListener("submit", async event => {
     event.preventDefault();
-    books.push({
-      id: id(),
+    if (!client || !currentUser || busy) return setStatus("먼저 로그인해 주세요.", "error");
+    busy = true;
+    const row = {
+      user_id: currentUser.id,
       title: $("book-title").value.trim(),
       author: $("book-author").value.trim(),
       isbn: $("book-isbn").value.trim(),
-      status: $("book-status").value
-    });
-    save();
+      reading_status: $("book-status").value
+    };
+    const {error} = await client.from("books").insert(row);
+    busy = false;
+    if (error) return setStatus("책 저장 실패: " + error.message, "error");
     event.target.reset();
-    render();
+    try { await loadCloudData(); setStatus("책을 온라인에 저장했어요.", "ok"); }
+    catch (err) { setStatus(err.message, "error"); }
   });
 
-  $("quote-form").addEventListener("submit", event => {
+  $("quote-form").addEventListener("submit", async event => {
     event.preventDefault();
+    if (!client || !currentUser || busy) return setStatus("먼저 로그인해 주세요.", "error");
     const bookId = $("quote-book").value;
-    if (!books.some(b => b.id === bookId)) {
-      alert("먼저 책을 등록해 주세요.");
-      return;
-    }
-    quotes.push({
-      id: id(), bookId,
-      text: $("quote-text").value.trim(),
+    if (!books.some(b => b.id === bookId)) return setStatus("먼저 책을 등록해 주세요.", "error");
+    busy = true;
+    const pageRaw = $("quote-page").value.trim();
+    const row = {
+      user_id: currentUser.id,
+      book_id: Number(bookId),
+      quote_text: $("quote-text").value.trim(),
       reflection: $("quote-reflection").value.trim(),
-      section: $("quote-section").value.trim(),
-      page: $("quote-page").value.trim()
-    });
-    save();
+      toc_title: $("quote-section").value.trim(),
+      page_number: pageRaw ? Number(pageRaw) : null
+    };
+    const {error} = await client.from("quotes").insert(row);
+    busy = false;
+    if (error) return setStatus("문장 저장 실패: " + error.message, "error");
     event.target.reset();
-    render();
-    alert("문장을 저장했어요.");
+    try { await loadCloudData(); setStatus("문장을 온라인에 저장했어요.", "ok"); }
+    catch (err) { setStatus(err.message, "error"); }
   });
 
-  document.addEventListener("click", event => {
+  document.addEventListener("click", async event => {
     const target = event.target;
     if (target.dataset.write) {
       $("quote-book").value = target.dataset.write;
@@ -276,15 +354,18 @@
     if (target.dataset.deleteBook) {
       const book = books.find(b => b.id === target.dataset.deleteBook);
       if (book && confirm(`'${book.title}' 책과 관련 문장을 삭제할까요?`)) {
-        books = books.filter(b => b.id !== book.id);
-        quotes = quotes.filter(q => q.bookId !== book.id);
-        save(); render();
+        const {error} = await client.from("books").delete().eq("id", Number(book.id));
+        if (error) return setStatus("삭제 실패: " + error.message, "error");
+        try { await loadCloudData(); setStatus("책과 연결된 문장을 삭제했어요.", "ok"); }
+        catch (err) { setStatus(err.message, "error"); }
       }
     }
     if (target.dataset.deleteQuote) {
       if (confirm("이 문장을 삭제할까요?")) {
-        quotes = quotes.filter(q => q.id !== target.dataset.deleteQuote);
-        save(); render();
+        const {error} = await client.from("quotes").delete().eq("id", target.dataset.deleteQuote);
+        if (error) return setStatus("삭제 실패: " + error.message, "error");
+        try { await loadCloudData(); setStatus("문장을 삭제했어요.", "ok"); }
+        catch (err) { setStatus(err.message, "error"); }
       }
     }
     if (target.dataset.editQuote) {
@@ -294,13 +375,12 @@
       if (text === null) return;
       const reflection = prompt("나의 감상 수정", q.reflection);
       if (reflection === null) return;
-      q.text = text.trim();
-      q.reflection = reflection.trim();
-      save(); render();
+      const {error} = await client.from("quotes").update({quote_text:text.trim(), reflection:reflection.trim()}).eq("id", q.id);
+      if (error) return setStatus("수정 실패: " + error.message, "error");
+      try { await loadCloudData(); setStatus("문장을 수정했어요.", "ok"); }
+      catch (err) { setStatus(err.message, "error"); }
     }
   });
-
-  render();
 </script>
 </body>
 </html>
